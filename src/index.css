@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+.swiper-pagination-bullet {
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 1;
+}
+
+.swiper-pagination-bullet-active {
+  background: #4f46e5; /* indigo-600 */
+}
