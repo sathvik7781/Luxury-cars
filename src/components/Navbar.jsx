@@ -16,14 +16,14 @@ const Navbar = () => {
     navigate("/login");
   };
 
-  const linkClass = ({ isActive }) =>
-    `
-      relative text-sm font-medium transition
-      ${isActive ? "text-indigo-600" : "text-gray-700 hover:text-indigo-600"}
-      after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-full
-      after:origin-left after:scale-x-0 after:bg-indigo-600 after:transition
-      ${isActive ? "after:scale-x-100" : "hover:after:scale-x-100"}
-    `;
+  const linkClass = ({ isActive }) => `
+    relative text-sm font-medium transition
+    ${isActive ? "text-[#d6b56e]" : "text-zinc-300 hover:text-white"}
+    after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-full
+    after:origin-left after:scale-x-0 after:bg-[#d6b56e]
+    after:transition after:duration-300 after:ease-out
+    ${isActive ? "after:scale-x-100" : "hover:after:scale-x-100"}
+  `;
 
   useEffect(() => {
     if (authLoading || !user?.isAdmin) return;
@@ -31,33 +31,30 @@ const Navbar = () => {
   }, [user, authLoading, location.pathname]);
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur border-b">
+    <nav className="sticky top-0 z-50 bg-[#020617]/80 backdrop-blur-xl border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-        {/* ---------- LOGO ---------- */}
-        <Link to="/" className="text-xl font-bold tracking-wide">
-          Luxury<span className="text-indigo-600">Cars</span>
+        {/* LOGO */}
+        <Link to="/" className="text-xl font-bold tracking-wide text-white">
+          Luxury<span className="text-[#d6b56e]">Cars</span>
         </Link>
 
-        {/* ---------- DESKTOP LINKS ---------- */}
+        {/* DESKTOP LINKS */}
         <div className="hidden md:flex items-center gap-6">
           <NavLink to="/" className={linkClass}>
             Home
           </NavLink>
 
-          {/* User */}
           {user && !user.isAdmin && (
             <>
               <NavLink to="/my-inquiries" className={linkClass}>
                 My Inquiries
               </NavLink>
-
               <NavLink to="/profile" className={linkClass}>
                 Profile
               </NavLink>
             </>
           )}
 
-          {/* Admin */}
           {user?.isAdmin && (
             <>
               <NavLink to="/admin" end className={linkClass}>
@@ -72,7 +69,7 @@ const Navbar = () => {
               >
                 Inquiries
                 {unreadCount > 0 && (
-                  <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] rounded-full bg-indigo-600 px-1 text-[11px] font-bold text-white flex items-center justify-center">
+                  <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] rounded-full bg-[#d6b56e] px-1 text-[11px] font-bold text-black flex items-center justify-center">
                     {unreadCount}
                   </span>
                 )}
@@ -84,7 +81,6 @@ const Navbar = () => {
             </>
           )}
 
-          {/* Auth */}
           {!user && (
             <>
               <NavLink to="/login" className={linkClass}>
@@ -99,32 +95,30 @@ const Navbar = () => {
           {user && (
             <button
               onClick={handleLogout}
-              className="rounded-lg bg-rose-100 px-4 py-1.5 text-sm font-semibold text-rose-700 hover:bg-rose-200 transition"
+              className="rounded-full bg-white/5 px-4 py-1.5 text-sm font-semibold text-zinc-200 hover:bg-white/10 transition"
             >
               Logout
             </button>
           )}
         </div>
 
-        {/* ---------- MOBILE TOGGLE ---------- */}
+        {/* MOBILE TOGGLE */}
         <button
           onClick={() => setOpen((p) => !p)}
-          className="md:hidden text-gray-700"
+          className="md:hidden text-zinc-300"
         >
-          <i
-            className={`fa-solid ${open ? "fa-xmark" : "fa-bars"} text-xl`}
-          ></i>
+          <i className={`fa-solid ${open ? "fa-xmark" : "fa-bars"} text-xl`} />
         </button>
       </div>
 
-      {/* ---------- MOBILE MENU ---------- */}
+      {/* MOBILE MENU */}
       <div
         className={`
           md:hidden overflow-hidden transition-all duration-300
           ${open ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}
         `}
       >
-        <div className="border-t bg-white px-4 py-4 flex flex-col gap-3">
+        <div className="border-t border-white/10 bg-[#020617] px-4 py-4 flex flex-col gap-3">
           <MobileLink to="/" onClick={() => setOpen(false)}>
             Home
           </MobileLink>
@@ -171,7 +165,7 @@ const Navbar = () => {
                 setOpen(false);
                 handleLogout();
               }}
-              className="mt-2 rounded-lg bg-rose-100 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-200 text-left"
+              className="mt-2 rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-zinc-200 hover:bg-white/10 text-left"
             >
               Logout
             </button>
@@ -184,12 +178,12 @@ const Navbar = () => {
 
 export default Navbar;
 
-/* ---------- SMALL COMPONENT ---------- */
+/* MOBILE LINK */
 const MobileLink = ({ to, children, onClick }) => (
   <NavLink
     to={to}
     onClick={onClick}
-    className="text-sm font-medium text-gray-700 hover:text-indigo-600 transition"
+    className="text-sm font-medium text-zinc-300 hover:text-white transition"
   >
     {children}
   </NavLink>
