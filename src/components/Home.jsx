@@ -145,13 +145,16 @@ const Home = () => {
               >
                 <div className="relative overflow-hidden rounded-xl">
                   <img
-                    loading="lazy"
                     src={car.coverImage || "/placeholder-car.jpg"}
                     alt={`${car.brand} ${car.model}`}
-                    className="h-44 w-full object-cover
-                    transition duration-700
-                    blur-sm group-hover:blur-0 group-hover:scale-110"
+                    loading="lazy"
+                    className="
+    h-44 w-full object-cover
+    transition-transform duration-500
+    group-hover:scale-110
+  "
                   />
+
                   <span
                     className={`absolute top-3 right-3 rounded-full px-3 py-1 text-xs font-semibold
                     ${
