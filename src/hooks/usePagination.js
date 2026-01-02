@@ -12,8 +12,17 @@ const usePagination = (data, pageSize = 10) => {
 
   const next = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
   const prev = () => setCurrentPage((p) => Math.max(p - 1, 1));
+  const reset = () => setCurrentPage(1);
 
-  return { paginatedData, currentPage, totalPages, next, prev, setCurrentPage };
+  return {
+    paginatedData,
+    currentPage,
+    totalPages,
+    next,
+    prev,
+    reset,
+    setCurrentPage,
+  };
 };
 
 export default usePagination;

@@ -17,12 +17,8 @@ const Navbar = () => {
   };
 
   const linkClass = ({ isActive }) => `
-    relative text-sm font-medium transition
+    relative text-sm tracking-wide transition-colors duration-300
     ${isActive ? "text-[#d6b56e]" : "text-zinc-300 hover:text-white"}
-    after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-full
-    after:origin-left after:scale-x-0 after:bg-[#d6b56e]
-    after:transition after:duration-300 after:ease-out
-    ${isActive ? "after:scale-x-100" : "hover:after:scale-x-100"}
   `;
 
   useEffect(() => {
@@ -31,15 +27,15 @@ const Navbar = () => {
   }, [user, authLoading, location.pathname]);
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#020617]/80 backdrop-blur-xl border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+    <nav className="sticky top-0 z-50 bg-[#020617]/70 backdrop-blur-2xl border-b border-white/5">
+      <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
         {/* LOGO */}
-        <Link to="/" className="text-xl font-bold tracking-wide text-white">
-          Luxury<span className="text-[#d6b56e]">Cars</span>
+        <Link to="/" className="text-lg font-semibold tracking-wide text-white">
+          Luxury<span className="text-[#d6b56e] ml-0.5">Cars</span>
         </Link>
 
-        {/* DESKTOP LINKS */}
-        <div className="hidden md:flex items-center gap-6">
+        {/* DESKTOP NAV */}
+        <div className="hidden md:flex items-center gap-8">
           <NavLink to="/" className={linkClass}>
             Home
           </NavLink>
@@ -61,15 +57,10 @@ const Navbar = () => {
                 Dashboard
               </NavLink>
 
-              <NavLink
-                to="/admin/inquiries"
-                className={({ isActive }) =>
-                  `relative ${linkClass({ isActive })}`
-                }
-              >
+              <NavLink to="/admin/inquiries" className={linkClass}>
                 Inquiries
                 {unreadCount > 0 && (
-                  <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] rounded-full bg-[#d6b56e] px-1 text-[11px] font-bold text-black flex items-center justify-center">
+                  <span className="ml-2 inline-flex min-w-[18px] h-[18px] items-center justify-center rounded-full bg-[#d6b56e] px-1 text-[11px] font-semibold text-black">
                     {unreadCount}
                   </span>
                 )}
@@ -95,7 +86,12 @@ const Navbar = () => {
           {user && (
             <button
               onClick={handleLogout}
-              className="rounded-full bg-white/5 px-4 py-1.5 text-sm font-semibold text-zinc-200 hover:bg-white/10 transition"
+              className="
+                rounded-full border border-white/10
+                px-5 py-1.5 text-sm tracking-wide
+                text-zinc-200 hover:text-white
+                hover:border-white/20 transition
+              "
             >
               Logout
             </button>
@@ -113,12 +109,11 @@ const Navbar = () => {
 
       {/* MOBILE MENU */}
       <div
-        className={`
-          md:hidden overflow-hidden transition-all duration-300
-          ${open ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}
+        className={`md:hidden transition-all duration-300 ease-out overflow-hidden
+          ${open ? "max-h-[520px] opacity-100" : "max-h-0 opacity-0"}
         `}
       >
-        <div className="border-t border-white/10 bg-[#020617] px-4 py-4 flex flex-col gap-3">
+        <div className="bg-[#020617]/95 backdrop-blur-xl px-6 py-6 space-y-4 border-t border-white/5">
           <MobileLink to="/" onClick={() => setOpen(false)}>
             Home
           </MobileLink>
@@ -165,7 +160,7 @@ const Navbar = () => {
                 setOpen(false);
                 handleLogout();
               }}
-              className="mt-2 rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-zinc-200 hover:bg-white/10 text-left"
+              className="mt-4 w-full rounded-full border border-white/10 px-5 py-2 text-sm text-zinc-200 hover:text-white transition text-left"
             >
               Logout
             </button>
@@ -183,7 +178,7 @@ const MobileLink = ({ to, children, onClick }) => (
   <NavLink
     to={to}
     onClick={onClick}
-    className="text-sm font-medium text-zinc-300 hover:text-white transition"
+    className="block text-sm tracking-wide text-zinc-300 hover:text-white transition"
   >
     {children}
   </NavLink>

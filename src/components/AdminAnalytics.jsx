@@ -12,7 +12,41 @@ import {
   YAxis,
 } from "recharts";
 
-const COLORS = ["#6366f1", "#22c55e", "#f59e0b", "#ef4444"];
+/* ---------- COLORS ---------- */
+const STATUS_COLORS = {
+  pending: "#c9a24d",
+  contacted: "#60a5fa",
+  sold: "#22c55e",
+  notSold: "#ef4444",
+};
+
+const PIE_COLORS = ["#c9a24d", "#60a5fa", "#22c55e", "#ef4444"];
+
+/* ---------- COUNT UP ---------- */
+const useCountUp = (value, duration = 600) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let current = 0;
+    const step = Math.max(1, Math.floor(value / (duration / 16)));
+
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= value) {
+        setCount(value);
+        clearInterval(timer);
+      } else {
+        setCount(current);
+      }
+    }, 16);
+
+    return () => clearInterval(timer);
+  }, [value, duration]);
+
+  return count;
+};
+
+/* ====================================================== */
 
 const AdminAnalytics = () => {
   const [data, setData] = useState(null);
@@ -29,30 +63,32 @@ const AdminAnalytics = () => {
 
   if (loading) {
     return (
-      <div className="p-10 animate-pulse space-y-4">
-        <div className="h-6 w-1/3 bg-gray-200 rounded"></div>
-        <div className="grid grid-cols-4 gap-4">
+      <div className="max-w-7xl mx-auto px-4 py-10 animate-pulse space-y-6">
+        <div className="h-6 w-1/3 bg-white/10 rounded"></div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-20 bg-gray-200 rounded-xl"></div>
+            <div key={i} className="h-24 bg-white/10 rounded-2xl"></div>
           ))}
         </div>
+        <div className="h-72 bg-white/10 rounded-2xl"></div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
-      {/* ---------- HEADING ---------- */}
+    <div className="max-w-7xl mx-auto px-4 py-10 space-y-8 bg-[#0b0b0e] text-white">
+      {/* ---------- HEADER ---------- */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">
-          Admin <span className="text-indigo-600">Analytics</span>
+        <h1 className="text-3xl font-semibold">
+          Admin <span className="text-[#c9a24d]">Analytics</span>
         </h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-white/60 mt-1">
           Business performance overview
         </p>
       </div>
 
-      <div className="flex gap-2">
+      {/* ---------- RANGE FILTER ---------- */}
+      <div className="flex flex-wrap gap-2">
         {[
           ["today", "Today"],
           ["week", "Last 7 Days"],
@@ -62,11 +98,12 @@ const AdminAnalytics = () => {
           <button
             key={key}
             onClick={() => setRange(key)}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium ${
-              range === key
-                ? "bg-indigo-600 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
+            className={`rounded-full px-4 py-1.5 text-sm transition
+              ${
+                range === key
+                  ? "bg-[#c9a24d] text-black"
+                  : "bg-[#1a1a22] text-white/70 hover:bg-white/10"
+              }`}
           >
             {label}
           </button>
@@ -75,18 +112,28 @@ const AdminAnalytics = () => {
 
       {/* ---------- KPI CARDS ---------- */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Stat title="Total Cars" value={data.totalCars} />
-        <Stat title="Sold Cars" value={data.soldCars} />
-        <Stat title="Total Inquiries" value={data.totalInquiries} />
-        <Stat title="Conversion %" value={`${data.conversionRate}%`} />
+        <Stat title="Total Cars" value={data.totalCars} color="#c9a24d" />
+        <Stat title="Sold Cars" value={data.soldCars} color="#22c55e" />
+        <Stat
+          title="Total Inquiries"
+          value={data.totalInquiries}
+          color="#60a5fa"
+        />
+        <Stat
+          title="Conversion %"
+          value={data.conversionRate}
+          suffix="%"
+          color="#22c55e"
+        />
       </div>
 
-      {/* ---------- FUNNEL + BRAND ---------- */}
+      {/* ---------- CHARTS ---------- */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Funnel */}
-        <div className="rounded-2xl bg-white p-5 border shadow-sm">
-          <h3 className="font-semibold mb-4">Inquiry Funnel</h3>
-          <ResponsiveContainer width="100%" height={250}>
+        {/* FUNNEL */}
+        <div className="rounded-2xl bg-[#121217] border border-white/10 p-5">
+          <h3 className="font-semibold mb-4 text-white/80">Inquiry Funnel</h3>
+
+          <ResponsiveContainer width="100%" height={260}>
             <BarChart
               data={[
                 { name: "Pending", value: data.pending },
@@ -94,42 +141,57 @@ const AdminAnalytics = () => {
                 { name: "Sold", value: data.sold },
               ]}
             >
-              <XAxis dataKey="name" />
-              <YAxis />
+              <XAxis dataKey="name" stroke="#888" />
+              <YAxis stroke="#888" />
               <Tooltip />
-              <Bar dataKey="value" fill="#6366f1" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="value" fill="#c9a24d" radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="rounded-2xl bg-white p-5 border shadow-sm">
-          <h3 className="font-semibold mb-3">Top Interested Cars</h3>
+        {/* TOP CARS */}
+        <div className="rounded-2xl bg-[#121217] border border-white/10 p-5">
+          <h3 className="font-semibold mb-4 text-white/80">
+            Top Interested Cars
+          </h3>
 
           {data.topCars.length === 0 ? (
-            <p className="text-sm text-gray-500">No inquiries yet</p>
+            <p className="text-sm text-white/50">No inquiries yet</p>
           ) : (
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {data.topCars.map((c, i) => (
-                <li key={i} className="flex justify-between text-sm">
-                  <span>{c.name}</span>
-                  <span className="font-semibold">{c.value}</span>
+                <li
+                  key={i}
+                  className="flex justify-between text-sm
+                  rounded-lg bg-[#1a1a22] px-4 py-2"
+                >
+                  <span className="text-white/70">{c.name}</span>
+                  <span className="font-semibold text-[#c9a24d]">
+                    {c.value}
+                  </span>
                 </li>
               ))}
             </ul>
           )}
         </div>
 
-        {/* Brand wise */}
-        <div className="rounded-2xl bg-white p-5 border shadow-sm">
-          <h3 className="font-semibold mb-4">Sales by Brand</h3>
+        {/* BRAND PIE */}
+        <div className="rounded-2xl bg-[#121217] border border-white/10 p-5 lg:col-span-2">
+          <h3 className="font-semibold mb-4 text-white/80">Sales by Brand</h3>
+
           {data.brandData.length === 0 ? (
-            <p className="text-sm text-gray-500">No sales yet</p>
+            <p className="text-sm text-white/50">No sales yet</p>
           ) : (
-            <ResponsiveContainer width="100%" height={250}>
+            <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-                <Pie data={data.brandData} dataKey="value" outerRadius={90}>
+                <Pie
+                  data={data.brandData}
+                  dataKey="value"
+                  outerRadius={110}
+                  innerRadius={55}
+                >
                   {data.brandData.map((_, i) => (
-                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                    <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -144,9 +206,22 @@ const AdminAnalytics = () => {
 
 export default AdminAnalytics;
 
-const Stat = ({ title, value }) => (
-  <div className="rounded-xl bg-white border px-4 py-3 shadow-sm">
-    <p className="text-sm text-gray-500">{title}</p>
-    <p className="text-2xl font-bold mt-1">{value}</p>
-  </div>
-);
+/* ====================================================== */
+
+const Stat = ({ title, value, color, suffix = "" }) => {
+  const animated = useCountUp(Number(value) || 0);
+
+  return (
+    <div
+      className="rounded-2xl border border-white/10 p-4
+      bg-gradient-to-br from-[#1a1a22] to-[#121217]
+      hover:scale-[1.02] transition"
+    >
+      <p className="text-sm text-white/60">{title}</p>
+      <p className="text-2xl font-semibold mt-1" style={{ color }}>
+        {animated}
+        {suffix}
+      </p>
+    </div>
+  );
+};
