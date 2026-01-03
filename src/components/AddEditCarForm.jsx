@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { uploadToCloudinary } from "../utils/cloudinaryUpload";
 import Swal from "sweetalert2";
 
@@ -6,7 +5,6 @@ const AddEditCarForm = ({
   form,
   setForm,
   editingId,
-  setEditingId,
   images,
   setImages,
   previewImages,

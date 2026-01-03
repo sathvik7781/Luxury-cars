@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 const AdminTableSkeleton = ({ rows = 6 }) => (
   <>
     {/* Desktop skeleton */}
